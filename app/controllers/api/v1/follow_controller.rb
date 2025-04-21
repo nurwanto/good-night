@@ -2,6 +2,7 @@ module Api
   module V1
     class FollowController < ApplicationController
       before_action :authenticate!
+
       include Api::V1::GeneralHelper
       protect_from_forgery with: :null_session
 
@@ -22,6 +23,10 @@ module Api
 
       def get_followers
         render json: { data: @current_user.followers }
+      end
+
+      def get_followed
+        render json: { data: @current_user.followed }
       end
     end
   end
