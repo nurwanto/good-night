@@ -10,6 +10,8 @@ Rails.application.routes.draw do
       get 'follow/followers' => 'follow#get_followers'
       get 'follow/followed' => 'follow#get_followed'
       post 'follow' => 'follow#action'
+
+      get 'bed_time/history' => 'bed_time#history'
     end
   end
 end
