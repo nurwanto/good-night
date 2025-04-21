@@ -1,0 +1,74 @@
+# See https://github.com/github/gitignore/blob/main/Rails.gitignore for updates
+
+# Ignore bundler config.
+/.bundle
+
+# Ignore logs and temp files.
+log/*
+tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore PID and socket files.
+*.pid
+*.pid.lock
+tmp/pids/*
+tmp/sockets/*
+
+# Ignore byebug command history file.
+.byebug_history
+
+# Ignore node modules and Yarn lock (if using JS bundlers)
+node_modules/
+yarn-error.log
+
+# Ignore compiled assets (if not precompiled for deployment)
+public/assets
+public/packs
+public/packs-test
+public/vite-assets
+public/webpack
+
+# Ignore storage files (ActiveStorage)
+storage/*
+!/storage/.keep
+
+# Ignore master key and credentials
+config/master.key
+config/credentials.yml.enc
+config/credentials/*.key
+config/credentials/*.enc
+
+# Ignore SQLite database files
+*.sqlite3
+*.sqlite3-journal
+
+# Ignore macOS/system files
+.DS_Store
+.env
+.env.*
+
+# Ignore coverage reports
+coverage/
+coverage/*.json
+
+# Ignore IDE/editor folders
+.idea/
+.vscode/
+*.swp
+*~
+
+# Ignore Capybara screenshots
+tmp/capybara
+
+# Ignore uploaded files (if applicable)
+public/uploads
+
+# Ignore spring files
+spring/*.pid
+
+# Ignore Docker-related files (optional)
+docker-compose.override.yml
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
