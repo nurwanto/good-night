@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       get 'follow/followers' => 'follow#get_followers'
       get 'follow/followed' => 'follow#get_followed'
+      post 'follow' => 'follow#action'
     end
   end
 end
