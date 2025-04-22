@@ -34,6 +34,6 @@ alice_id = User.find_by(name: 'Alice').id
 bob_id = User.find_by(name: 'Bob').id
 charlie_id = User.find_by(name: 'Charlie').id
 
-UserFollower.create!(follower_id: alice_id, followed_id: bob_id)
-UserFollower.create!(follower_id: alice_id, followed_id: charlie_id)
-UserFollower.create!(follower_id: bob_id, followed_id: charlie_id)
+UserFollower.create!(follower_id: alice_id, following_id: bob_id)
+UserFollower.create!(follower_id: alice_id, following_id: charlie_id)
+UserFollower.create!(follower_id: bob_id, following_id: charlie_id)

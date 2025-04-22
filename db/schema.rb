@@ -24,12 +24,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_21_161414) do
 
   create_table "user_followers", force: :cascade do |t|
     t.integer "follower_id", null: false
-    t.integer "followed_id", null: false
+    t.integer "following_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["followed_id", "follower_id"], name: "index_user_followers_on_followed_id_and_follower_id", unique: true
-    t.index ["followed_id"], name: "index_user_followers_on_followed_id"
     t.index ["follower_id"], name: "index_user_followers_on_follower_id"
+    t.index ["following_id", "follower_id"], name: "index_user_followers_on_following_id_and_follower_id", unique: true
+    t.index ["following_id"], name: "index_user_followers_on_following_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -39,6 +39,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_21_161414) do
   end
 
   add_foreign_key "bed_time_histories", "users"
-  add_foreign_key "user_followers", "users", column: "followed_id"
   add_foreign_key "user_followers", "users", column: "follower_id"
+  add_foreign_key "user_followers", "users", column: "following_id"
 end

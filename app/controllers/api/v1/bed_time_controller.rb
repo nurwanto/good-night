@@ -21,14 +21,14 @@ module Api
         cursor_duration, cursor_id = params[:cursor]&.split('-')
 
         query = BedTimeHistory
-                  .joins('INNER JOIN user_followers uf ON bed_time_histories.user_id = uf.followed_id')
-                  .where('bed_time_histories.created_at >= ? AND uf.follower_id = ?', 1.week.ago, @current_user.id)
-                  .select('bed_time_histories.id, bed_time_histories.user_id, bed_time_histories.bed_time, bed_time_histories.wake_up_time, bed_time_histories.sleep_duration')
-                  .order('bed_time_histories.sleep_duration DESC, bed_time_histories.id DESC')
+                  .joins('INNER JOIN user_followers uf ON sleep_histories.user_id = uf.following_id')
+                  .where('sleep_histories.created_at >= ? AND uf.follower_id = ?', 1.week.ago, @current_user.id)
+                  .select('sleep_histories.id, sleep_histories.user_id, sleep_histories.bed_time, sleep_histories.wake_up_time, sleep_histories.sleep_duration')
+                  .order('sleep_histories.sleep_duration DESC, sleep_histories.id DESC')
 
         if cursor_duration.present? && cursor_id.present?
           query = query.where(
-            '(bed_time_histories.sleep_duration < ?) OR (bed_time_histories.sleep_duration = ? AND bed_time_histories.id < ?)',
+            '(sleep_histories.sleep_duration < ?) OR (sleep_histories.sleep_duration = ? AND sleep_histories.id < ?)',
             cursor_duration, cursor_duration, cursor_id
           )
         end
@@ -57,13 +57,13 @@ module Api
         current_time = Time.now
         case params[:type].to_s
         when 'bed_time'
-          unless @current_user.bed_time_histories&.last&.wake_up_time.present?
+          unless @current_user.sleep_histories&.last&.wake_up_time.present?
             raise StandardError, "you haven't woken up yet"
           end
 
           BedTimeHistory.create!(bed_time: current_time, user_id: @current_user.id)
         when 'wake_up'
-          last_history = @current_user.bed_time_histories&.last
+          last_history = @current_user.sleep_histories&.last
           unless last_history&.bed_time.present? && last_history&.wake_up_time.blank?
             raise StandardError, "you haven't slept yet"
           end
