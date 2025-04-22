@@ -67,4 +67,69 @@ RSpec.describe Api::V1::BedTimeController, type: :controller do
       end
     end
   end
+
+  describe 'POST #set_unset' do
+    context 'when setting bed_time' do
+      it 'creates a new bed_time record if the user has woken up' do
+        # Simulate the user waking up
+        BedTimeHistory.create!(user: current_user, bed_time: 10.hours.ago, wake_up_time: 2.hours.ago)
+
+        post :set_unset, params: { current_user_id: current_user.id, type: 'bed_time' }
+
+        expect(response).to have_http_status(:ok)
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['message']).to include('bed_time successfully set')
+        expect(current_user.bed_time_histories.last.bed_time).to be_within(1.second).of(Time.now)
+      end
+
+      it 'raises an error if the user has not woken up yet' do
+        # Simulate the user not waking up
+        BedTimeHistory.create!(user: current_user, bed_time: 10.hours.ago, wake_up_time: nil)
+
+        post :set_unset, params: { current_user_id: current_user.id, type: 'bed_time' }
+
+        expect(response).to have_http_status(:bad_request)
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['error_message']).to eq("you haven't woken up yet")
+      end
+    end
+
+    context 'when setting wake_up' do
+      it 'updates the last bed_time record with wake_up_time if the user has slept' do
+        # Simulate the user sleeping
+        BedTimeHistory.create!(user: current_user, bed_time: 10.hours.ago, wake_up_time: nil)
+
+        post :set_unset, params: { current_user_id: current_user.id, type: 'wake_up' }
+
+        expect(response).to have_http_status(:ok)
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['message']).to include('wake_up successfully set')
+        expect(current_user.bed_time_histories.last.wake_up_time).to be_within(1.second).of(Time.now)
+      end
+
+      it 'raises an error if the user has not slept yet' do
+        # Simulate no bed_time record
+        post :set_unset, params: { current_user_id: current_user.id, type: 'wake_up' }
+
+        expect(response).to have_http_status(:bad_request)
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['error_message']).to eq("you haven't slept yet")
+      end
+    end
+
+    context 'when passing an invalid type' do
+      it 'raises an error for invalid type' do
+        post :set_unset, params: { current_user_id: current_user.id, type: 'invalid_type' }
+
+        expect(response).to have_http_status(:bad_request)
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['error_message']).to eq('invalid type, accepted value ["bed_time", "wake_up"]')
+      end
+    end
+  end
 end

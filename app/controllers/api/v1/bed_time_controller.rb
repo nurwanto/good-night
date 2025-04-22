@@ -52,6 +52,29 @@ module Api
           }
         }
       end
+
+      def set_unset
+        current_time = Time.now
+        case params[:type].to_s
+        when 'bed_time'
+          unless @current_user.bed_time_histories&.last&.wake_up_time.present?
+            raise StandardError, "you haven't woken up yet"
+          end
+
+          BedTimeHistory.create!(bed_time: current_time, user_id: @current_user.id)
+        when 'wake_up'
+          last_history = @current_user.bed_time_histories&.last
+          unless last_history&.bed_time.present? && last_history&.wake_up_time.blank?
+            raise StandardError, "you haven't slept yet"
+          end
+
+          last_history.update!(wake_up_time: current_time)
+        else
+          raise StandardError, 'invalid type, accepted value ["bed_time", "wake_up"]'
+        end
+
+        render json: { message: "#{params[:type]} successfully set at #{current_time}" }
+      end
     end
   end
 end

@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       post 'follow' => 'follow#action'
 
       get 'bed_time/history' => 'bed_time#history'
+      post 'bed_time/set_unset' => 'bed_time#set_unset'
     end
   end
 end
