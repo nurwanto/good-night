@@ -34,6 +34,11 @@ gem "bootsnap", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
+# A rack middleware for throttling and blocking abusive requests [https://github.com/rack/rack-attack]
+gem 'rack-attack', '~> 6.7'
+# Use mysql2 as the database for Active Record
+gem 'mysql2', '~> 0.5.2'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -55,4 +60,5 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "simplecov", "~> 0.22.0"
 end
