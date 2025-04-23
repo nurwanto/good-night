@@ -13,8 +13,9 @@ module Api
 
         query = BedTimeHistory
                   .joins('INNER JOIN user_followers uf ON bed_time_histories.user_id = uf.following_id')
+                  .joins('INNER JOIN users ON bed_time_histories.user_id = users.id')
                   .where('bed_time_histories.created_at >= ? AND uf.follower_id = ?', 1.week.ago, @current_user.id)
-                  .select('bed_time_histories.id, bed_time_histories.user_id, bed_time_histories.bed_time, bed_time_histories.wake_up_time, bed_time_histories.sleep_duration')
+                  .select('bed_time_histories.id, bed_time_histories.user_id, bed_time_histories.bed_time, bed_time_histories.wake_up_time, bed_time_histories.sleep_duration, users.name')
                   .order('bed_time_histories.sleep_duration DESC, bed_time_histories.id DESC')
 
         if next_cursor_duration.present? && next_cursor_id.present?
@@ -44,6 +45,7 @@ module Api
             {
               id: x.id,
               user_id: x.user_id,
+              user_name: x.name,
               bed_time: x.bed_time,
               wake_up_time: x.wake_up_time,
               duration: x.sleep_duration
