@@ -2,8 +2,14 @@
 Track users when they go to bed and when they wake up
 
 ## Asumptions:
-- Does not handle authentication, use 'current_user_id' in request body for simulation
+- Does not handle authentication, use `current_user_id` in request body for simulation
 - Does not implement user registration
+
+## Versioning:
+Ruby: 3.3.5
+Rails: 7.2.2.1
+Gem: 3.5.8
+Bundler: 2.5.16
 
 ## Installation:
 - `bundle install`
@@ -14,8 +20,9 @@ Track users when they go to bed and when they wake up
 ## Running app:
 - `rails s`
 
-## Running test:
+## Running test and see coverage:
 - `bundle exec rspec spec`
+Note: Open the `coverage/index.html` file in your browser to view the detailed coverage report.
 
 ## Available endpoints
 ### 1. Get bed time histories for all following users
@@ -25,10 +32,10 @@ Track users when they go to bed and when they wake up
 **Request body:**<br />
 ```
 {
-    "current_user_id": 1,     // User ID, required
+    "current_user_id": 1,     // User ID to simulate authentication, required
     "page_size": 4,           // Number of records in a page, default is 10, optional
-    "page_after": "25540-12", // Next page cursor, optional
-    "page_before": "22975-9"  // Previous page cursor, optional
+    "page_after": "25540-12", // Use next_cursor value from response body to access next page, optional
+    "page_before": "22975-9"  // Use previous_cursor value from response body to to access previous page, optional
 }
 ```
 **Response body:**
@@ -76,7 +83,7 @@ Track users when they go to bed and when they wake up
 **Request body:**
 ```
 {
-    "current_user_id": 1, // User ID, required
+    "current_user_id": 1, // User ID to simulate authentication, required
     "type": "bed_time"    // action type, accepted values: [wake_up, bed_time], required
 }
 ```
@@ -93,7 +100,7 @@ Track users when they go to bed and when they wake up
 **Request body:**
 ```
 {
-    "current_user_id": 1, // User ID, required
+    "current_user_id": 1, // User ID to simulate authentication, required
     "type": "wake_up"     // action type, accepted values: [wake_up, bed_time], required
 }
 ```
@@ -113,7 +120,7 @@ Track users when they go to bed and when they wake up
 **Request body:**
 ```
 {
-    "current_user_id": 1,   // User ID, required
+    "current_user_id": 1,   // User ID to simulate authentication, required
     "target_user_id": 2,    // User ID, user want to follow, required
     "user_action": "follow" // User action, accepted values: [follow, unfollow], required
 }
@@ -131,9 +138,9 @@ Track users when they go to bed and when they wake up
 **Request body:**
 ```
 {
-    "current_user_id": 1,   // User ID, required
-    "target_user_id": 2,    // User ID, user want to unfollow, required
-    "user_action": "unfollow" // User action, accepted values: [follow, unfollow], required
+    "current_user_id": 1,       // User ID to simulate authentication, required
+    "target_user_id": 2,        // User ID, user want to unfollow, required
+    "user_action": "unfollow"   // User action, accepted values: [follow, unfollow], required
 }
 ```
 **Response body:**
@@ -150,7 +157,7 @@ Track users when they go to bed and when they wake up
 **Request body:**
 ```
 {
-    "current_user_id": 4,         // User ID, required
+    "current_user_id": 4,         // User ID to simulate authentication, required
     "relation_type": "followers", // Relation type, accepted values: [following, followers], required
     "page_size": 1,               // Number of records in a page, default is 10, optional
     "page_after": 6,              // Next page cursor, optional
@@ -183,11 +190,11 @@ Track users when they go to bed and when they wake up
 **Request body:**
 ```
 {
-    "current_user_id": 4,         // User ID, required
+    "current_user_id": 4,         // User ID to simulate authentication, required
     "relation_type": "following", // Relation type, accepted values: [following, followers], required
     "page_size": 1,               // Number of records in a page, default is 10, optional
-    "page_after": 6,              // Next page cursor, optional
-    "page_before": 5              // Next page cursor, optional
+    "page_after": 6,              // Use next_cursor value from response body to access next page, optional
+    "page_before": 5              // Use previous_cursor value from response body to access previous page, optional
 }
 ```
 **Response body:**
