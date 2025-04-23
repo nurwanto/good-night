@@ -1,5 +1,6 @@
 class BedTimeHistory < ApplicationRecord
   before_save :calculate_sleep_duration
+  after_create :populate_metadata
   belongs_to :user
 
   private
@@ -10,5 +11,9 @@ class BedTimeHistory < ApplicationRecord
     else
       self.sleep_duration = 0
     end
+  end
+
+  def populate_metadata
+    self.update_column(:metadata, { username: user.name })
   end
 end
