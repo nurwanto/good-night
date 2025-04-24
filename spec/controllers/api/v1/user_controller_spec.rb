@@ -98,8 +98,6 @@ RSpec.describe Api::V1::UserController, type: :controller do
 
     context 'when following a user' do
       it 'successfully follows the target user' do
-        allow_any_instance_of(Api::V1::UserService).to receive(:create_relations).and_return(true)
-
         post :create_user_relations, params: { current_user_id: current_user.id, user_action: 'follow', target_user_id: target_user.id }
 
         expect(response).to have_http_status(:ok)
@@ -107,11 +105,20 @@ RSpec.describe Api::V1::UserController, type: :controller do
 
         expect(json_response['message']).to eq("you have successfully follow user #{target_user.id}")
       end
+
+      it 'returns bad request when the target user is not found' do
+        post :create_user_relations, params: { current_user_id: current_user.id, user_action: 'follow', target_user_id: 999 }
+
+        expect(response).to have_http_status(:bad_request)
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['error_message']).to eq("Couldn't find User with 'id'=999")
+      end
     end
 
     context 'when unfollowing a user' do
       it 'successfully unfollows the target user' do
-        allow_any_instance_of(Api::V1::UserService).to receive(:create_relations).and_return(true)
+        UserFollower.create!(follower: current_user, following: target_user)
 
         post :create_user_relations, params: { current_user_id: current_user.id, user_action: 'unfollow', target_user_id: target_user.id }
 

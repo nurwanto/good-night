@@ -1,6 +1,6 @@
 module Api
   module V1
-    class UserService
+    class UserService < ApplicationService
       def initialize(current_user, params)
         @current_user = current_user
         @params = params
@@ -11,21 +11,21 @@ module Api
 
         page_size = @params[:page_size].to_i > 0 ? @params[:page_size].to_i : 10
 
-        case @params[:relation_type].to_s
-        when 'followers'
-          query = @current_user.followers.order('user_followers.id DESC')
-        when 'following'
-          query = @current_user.following.order('user_followers.id DESC')
-        else
-          raise StandardError, 'invalid relation_type, accepted relation_type value ["followers", "following"]'
-        end
+        query = case @params[:relation_type]
+                when 'followers'
+                  @current_user.followers
+                when 'following'
+                  @current_user.following
+                end
 
         # Apply cursor-based pagination
         query = query.where('users.id < ?', @params[:page_after]) if @params[:page_after].present?
         query = query.where('users.id > ?', @params[:page_before]) if @params[:page_before].present?
 
         # Fetch one extra record to determine `has_more`
-        paginated_data = query.limit(page_size + 1).to_a
+        query = query.order('user_followers.id DESC').limit(page_size + 1)
+
+        paginated_data = query.to_a
         has_more = paginated_data.size > page_size
         paginated_data = paginated_data.first(page_size)
 
@@ -51,18 +51,9 @@ module Api
 
         case @params[:user_action].to_s
         when 'follow'
-          raise StandardError, "you are already following user #{target_user.id}" if UserFollower.find_by(
-            follower_id: @current_user.id, following_id: target_user.id
-          )
-
-          UserFollower.create!(follower_id: @current_user.id, following_id: target_user.id)
+          follow_user(target_user)
         when 'unfollow'
-          user_follower = UserFollower.find_by(follower_id: @current_user.id, following_id: target_user.id)
-          raise StandardError, "you are not following user #{target_user.id}" if user_follower.blank?
-
-          user_follower.destroy!
-        else
-          raise StandardError, 'invalid action, accepted user_action value ["follow", "unfollow"]'
+          unfollow_user(target_user)
         end
       end
 
@@ -84,6 +75,20 @@ module Api
         unless valid_actions.include?(@params[:user_action].to_s)
           raise StandardError, 'invalid user_actions, accepted user_action value ["follow", "unfollow"]'
         end
+      end
+
+      def follow_user(target_user)
+        begin
+          UserFollower.create!(follower_id: @current_user.id, following_id: target_user.id)
+        rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+          raise StandardError, "you are already following user #{target_user.id}"
+        end
+      end
+
+      def unfollow_user(target_user)
+        user_follower = UserFollower.find_by(follower_id: @current_user.id, following_id: target_user.id)
+        raise StandardError, "you are not following user #{target_user.id}" if user_follower.blank?
+        user_follower.destroy!
       end
     end
   end

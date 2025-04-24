@@ -92,5 +92,29 @@ RSpec.describe Api::V1::BedTimeController, type: :controller do
         expect(json_response['error_message']).to eq('Something went wrong')
       end
     end
+
+    context 'when an ArgumentError is raised' do
+      it 'returns an error message' do
+        allow_any_instance_of(Api::V1::BedTimeService).to receive(:set_sleep_time).and_raise(ArgumentError, 'Invalid argument')
+
+        post :set_unset, params: { current_user_id: current_user.id, type: 'invalid_type' }
+
+        expect(response).to have_http_status(:bad_request)
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['error_message']).to eq('Invalid argument')
+      end
+    end
+
+    context 'when type parameter is invalid' do
+      it 'returns an error message' do
+        post :set_unset, params: { current_user_id: current_user.id, type: 'invalid_type' }
+
+        expect(response).to have_http_status(:bad_request)
+        json_response = JSON.parse(response.body)
+
+        expect(json_response['error_message']).to eq("invalid type, accepted value [\"bed_time\", \"wake_up\"]")
+      end
+    end
   end
 end

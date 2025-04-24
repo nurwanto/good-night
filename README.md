@@ -22,6 +22,7 @@ Bundler: 2.5.16
 
 ## Running test and see coverage:
 - `bundle exec rspec spec`
+
 Note: Open the `coverage/index.html` file in your browser to view the detailed coverage report.
 
 ## Available endpoints

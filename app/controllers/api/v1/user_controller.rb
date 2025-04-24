@@ -6,12 +6,7 @@ module Api
       include Api::V1::GeneralHelper
       protect_from_forgery with: :null_session
 
-      rescue_from ArgumentError, ActiveRecord::RecordNotFound do |e|
-        render json: { error_message: e.message },
-               status: :not_found
-      end
-
-      rescue_from StandardError do |e|
+      rescue_from StandardError, ArgumentError do |e|
         render json: { error_message: e.message },
                status: :bad_request
       end

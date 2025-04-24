@@ -7,8 +7,7 @@ RSpec.describe Api::V1::BedTimeService, type: :service do
     BedTimeHistory.create!(
       user_id: follower_user.id,
       bed_time: Time.now - 8.hours,
-      wake_up_time: Time.now,
-      sleep_duration: 480
+      wake_up_time: Time.now
     )
   end
 
@@ -28,7 +27,7 @@ RSpec.describe Api::V1::BedTimeService, type: :service do
         expect(result[:pagination]).to include(:next_cursor, :previous_cursor, :page_size)
       end
 
-      it 'applies cursor-based pagination' do
+      it 'navigates to the next page using page_after' do
         params = { current_user_id: current_user.id, page_size: 1, page_after: "#{bed_time_history.sleep_duration}-#{bed_time_history.id}" }
         service = described_class.new(current_user, params)
 
@@ -36,6 +35,31 @@ RSpec.describe Api::V1::BedTimeService, type: :service do
 
         expect(result[:data]).to be_empty
         expect(result[:pagination][:next_cursor]).to be_nil
+      end
+
+      it 'navigates to the first page using page_before' do
+        follower_user2 = User.create!(name: 'Charlie')
+        UserFollower.create!(follower: current_user, following: follower_user2)
+        first_history = BedTimeHistory.create!(
+          user_id: follower_user.id,
+          bed_time: Time.now - 10.hours,
+          wake_up_time: Time.now - 8.hours,
+        )
+
+        second_history = BedTimeHistory.create!(
+          user_id: follower_user2.id,
+          bed_time: Time.now - 8.hours,
+          wake_up_time: Time.now - 7.hours,
+        )
+
+        params = { page_size: 1, page_before: "#{second_history.sleep_duration}-#{second_history.id}" }
+        service = described_class.new(current_user, params)
+        result = service.fetch_histories
+
+        expect(result[:data].size).to eq(1)
+        expect(result[:data][0][:id]).to eq(first_history.id)
+        expect(result[:pagination][:next_cursor]).to eq("#{first_history.sleep_duration}-#{first_history.id}")
+        expect(result[:pagination][:previous_cursor]).to be_nil
       end
     end
 
@@ -69,6 +93,9 @@ RSpec.describe Api::V1::BedTimeService, type: :service do
       end
 
       it 'raises an error if the user has not woken up yet' do
+        # Create a bed time history without a wake up time
+        BedTimeHistory.create!(user_id: current_user.id, bed_time: Time.now - 8.hours)
+
         params = { current_user_id: current_user.id, type: 'bed_time' }
         service = described_class.new(current_user, params)
 
