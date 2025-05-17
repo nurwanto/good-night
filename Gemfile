@@ -35,9 +35,9 @@ gem "bootsnap", require: false
 # gem "image_processing", "~> 1.2"
 
 # A rack middleware for throttling and blocking abusive requests [https://github.com/rack/rack-attack]
-gem 'rack-attack', '~> 6.7'
+gem "rack-attack", "~> 6.7"
 # Use mysql2 as the database for Active Record
-gem 'mysql2', '~> 0.5.2'
+gem "mysql2", "~> 0.5.2"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -49,8 +49,8 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 
-  gem 'rspec-rails', '~> 6.0'
-  gem 'byebug', '~> 12.0'
+  gem "rspec-rails", "~> 6.0"
+  gem "byebug", "~> 12.0"
 
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
@@ -59,5 +59,5 @@ group :development, :test do
   gem "faker", "~> 3.5"
 
   # Add dotenv-rails for managing environment variables
-  gem 'dotenv-rails'
+  gem "dotenv-rails"
 end

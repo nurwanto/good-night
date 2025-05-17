@@ -9,15 +9,15 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :user, only: [] do
         collection do
-          get 'relations', to: 'user#get_user_relations'
-          post 'relations', to: 'user#create_user_relations'
+          get "relations", to: "user#get_user_relations"
+          post "relations", to: "user#create_user_relations"
         end
       end
 
       resources :bed_time, only: [] do
         collection do
-          get 'history', to: 'bed_time#history'
-          post 'set_unset', to: 'bed_time#set_unset'
+          get "history", to: "bed_time#history"
+          post "set_unset", to: "bed_time#set_unset"
         end
       end
     end

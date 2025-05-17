@@ -22,7 +22,7 @@ RSpec.describe Api::V1::UserController, type: :controller do
       it 'returns the list of followers with pagination' do
         allow_any_instance_of(Api::V1::UserService).to receive(:fetch_relations).and_return(
           {
-            data: [{ id: follower_user.id, name: follower_user.name }],
+            data: [ { id: follower_user.id, name: follower_user.name } ],
             pagination: {
               next_cursor: nil,
               previous_cursor: nil,
@@ -48,7 +48,7 @@ RSpec.describe Api::V1::UserController, type: :controller do
       it 'returns the list of following users with pagination' do
         allow_any_instance_of(Api::V1::UserService).to receive(:fetch_relations).and_return(
           {
-            data: [{ id: following_user.id, name: following_user.name }],
+            data: [ { id: following_user.id, name: following_user.name } ],
             pagination: {
               next_cursor: nil,
               previous_cursor: nil,

@@ -12,18 +12,18 @@ module Api
         page_size = @params[:page_size].to_i > 0 ? @params[:page_size].to_i : 10
 
         query = case @params[:relation_type]
-                when 'followers'
+        when "followers"
                   @current_user.followers
-                when 'following'
+        when "following"
                   @current_user.following
-                end
+        end
 
         # Apply cursor-based pagination
-        query = query.where('users.id < ?', @params[:page_after]) if @params[:page_after].present?
-        query = query.where('users.id > ?', @params[:page_before]) if @params[:page_before].present?
+        query = query.where("users.id < ?", @params[:page_after]) if @params[:page_after].present?
+        query = query.where("users.id > ?", @params[:page_before]) if @params[:page_before].present?
 
         # Fetch one extra record to determine `has_more`
-        query = query.order('user_followers.id DESC').limit(page_size + 1)
+        query = query.order("user_followers.id DESC").limit(page_size + 1)
 
         paginated_data = query.to_a
         has_more = paginated_data.size > page_size
@@ -45,14 +45,14 @@ module Api
       def create_relations
         validate_user_action!
 
-        raise StandardError, 'target_user_id should be exist' if @params[:target_user_id].blank?
-        raise StandardError, 'you cannot follow yourself' if @params[:target_user_id] == @params[:current_user_id]
+        raise StandardError, "target_user_id should be exist" if @params[:target_user_id].blank?
+        raise StandardError, "you cannot follow yourself" if @params[:target_user_id] == @params[:current_user_id]
         target_user = User.find(@params[:target_user_id])
 
         case @params[:user_action].to_s
-        when 'follow'
+        when "follow"
           follow_user(target_user)
-        when 'unfollow'
+        when "unfollow"
           unfollow_user(target_user)
         end
       end
@@ -60,7 +60,7 @@ module Api
       private
 
       def validate_relation_type!
-        raise StandardError, 'relation_type should be exist' if @params[:relation_type].blank?
+        raise StandardError, "relation_type should be exist" if @params[:relation_type].blank?
 
         valid_types = %w[followers following]
         unless valid_types.include?(@params[:relation_type].to_s)
@@ -69,7 +69,7 @@ module Api
       end
 
       def validate_user_action!
-        raise StandardError, 'user_action should be exist' if @params[:user_action].blank?
+        raise StandardError, "user_action should be exist" if @params[:user_action].blank?
 
         valid_actions = %w[follow unfollow]
         unless valid_actions.include?(@params[:user_action].to_s)
