@@ -17,11 +17,11 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_23_100445) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "sleep_duration", default: 0, null: false
+    t.integer "sleep_duration_in_sec", default: 0, null: false
     t.json "metadata"
     t.index ["created_at"], name: "idx_bed_time_histories_created_at"
-    t.index ["sleep_duration", "id"], name: "idx_bed_time_histories_sleep_duration_id"
-    t.index ["sleep_duration"], name: "index_bed_time_histories_on_sleep_duration"
+    t.index ["sleep_duration_in_sec", "id"], name: "idx_bed_time_histories_sleep_duration_in_sec_id"
+    t.index ["sleep_duration_in_sec"], name: "index_bed_time_histories_on_sleep_duration_in_sec"
     t.index ["user_id"], name: "index_bed_time_histories_on_user_id"
   end
 

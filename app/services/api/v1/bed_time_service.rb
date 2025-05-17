@@ -14,18 +14,18 @@ module Api
         query = BedTimeHistory
                   .joins('INNER JOIN user_followers uf ON bed_time_histories.user_id = uf.following_id')
                   .where('bed_time_histories.created_at >= ? AND uf.follower_id = ?', 1.week.ago, @current_user.id)
-                  .select('bed_time_histories.id, bed_time_histories.user_id, bed_time_histories.bed_time, bed_time_histories.wake_up_time, bed_time_histories.sleep_duration, bed_time_histories.metadata')
-                  .order('bed_time_histories.sleep_duration DESC, bed_time_histories.id DESC')
+                  .select('bed_time_histories.id, bed_time_histories.user_id, bed_time_histories.bed_time, bed_time_histories.wake_up_time, bed_time_histories.sleep_duration_in_sec, bed_time_histories.metadata')
+                  .order('bed_time_histories.sleep_duration_in_sec DESC, bed_time_histories.id DESC')
 
         # Apply cursor-based pagination
         if next_cursor_duration.present? && next_cursor_id.present?
           query = query.where(
-            '(bed_time_histories.sleep_duration < ?) OR (bed_time_histories.sleep_duration = ? AND bed_time_histories.id < ?)',
+            '(bed_time_histories.sleep_duration_in_sec < ?) OR (bed_time_histories.sleep_duration_in_sec = ? AND bed_time_histories.id < ?)',
             next_cursor_duration, next_cursor_duration, next_cursor_id
           )
         elsif prev_cursor_duration.present? && prev_cursor_id.present?
           query = query.where(
-            '(bed_time_histories.sleep_duration > ?) OR (bed_time_histories.sleep_duration = ? AND bed_time_histories.id > ?)',
+            '(bed_time_histories.sleep_duration_in_sec > ?) OR (bed_time_histories.sleep_duration_in_sec = ? AND bed_time_histories.id > ?)',
             prev_cursor_duration, prev_cursor_duration, prev_cursor_id
           )
         end
@@ -36,8 +36,8 @@ module Api
         paginated_data = paginated_data.first(page_size)
 
         # Generate cursors
-        previous_cursor = @params[:page_after].present? ? "#{paginated_data.first&.sleep_duration}-#{paginated_data.first&.id}" : nil
-        next_cursor = has_more || @params[:page_before].present? ? "#{paginated_data.last&.sleep_duration}-#{paginated_data.last&.id}" : nil
+        previous_cursor = @params[:page_after].present? ? "#{paginated_data.first&.sleep_duration_in_sec}-#{paginated_data.first&.id}" : nil
+        next_cursor = has_more || @params[:page_before].present? ? "#{paginated_data.last&.sleep_duration_in_sec}-#{paginated_data.last&.id}" : nil
 
         {
           data: paginated_data.map do |x|
@@ -47,7 +47,7 @@ module Api
               user_name: x.metadata["username"],
               bed_time: x.bed_time,
               wake_up_time: x.wake_up_time,
-              duration: x.sleep_duration
+              duration: x.sleep_duration_in_sec
             }
           end,
           pagination: {

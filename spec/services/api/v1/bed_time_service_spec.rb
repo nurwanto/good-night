@@ -28,7 +28,7 @@ RSpec.describe Api::V1::BedTimeService, type: :service do
       end
 
       it 'navigates to the next page using page_after' do
-        params = { current_user_id: current_user.id, page_size: 1, page_after: "#{bed_time_history.sleep_duration}-#{bed_time_history.id}" }
+        params = { current_user_id: current_user.id, page_size: 1, page_after: "#{bed_time_history.sleep_duration_in_sec}-#{bed_time_history.id}" }
         service = described_class.new(current_user, params)
 
         result = service.fetch_histories
@@ -52,13 +52,13 @@ RSpec.describe Api::V1::BedTimeService, type: :service do
           wake_up_time: Time.now - 7.hours,
         )
 
-        params = { page_size: 1, page_before: "#{second_history.sleep_duration}-#{second_history.id}" }
+        params = { page_size: 1, page_before: "#{second_history.sleep_duration_in_sec}-#{second_history.id}" }
         service = described_class.new(current_user, params)
         result = service.fetch_histories
 
         expect(result[:data].size).to eq(1)
         expect(result[:data][0][:id]).to eq(first_history.id)
-        expect(result[:pagination][:next_cursor]).to eq("#{first_history.sleep_duration}-#{first_history.id}")
+        expect(result[:pagination][:next_cursor]).to eq("#{first_history.sleep_duration_in_sec}-#{first_history.id}")
         expect(result[:pagination][:previous_cursor]).to be_nil
       end
     end

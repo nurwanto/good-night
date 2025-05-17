@@ -7,7 +7,7 @@ RSpec.describe Api::V1::BedTimeController, type: :controller do
       user_id: current_user.id,
       bed_time: Time.now - 8.hours,
       wake_up_time: Time.now,
-      sleep_duration: 480
+      sleep_duration_in_sec: 480
     )
   end
 
@@ -28,7 +28,7 @@ RSpec.describe Api::V1::BedTimeController, type: :controller do
                 user_id: bed_time_history.user_id,
                 bed_time: bed_time_history.bed_time,
                 wake_up_time: bed_time_history.wake_up_time,
-                duration: bed_time_history.sleep_duration
+                duration: bed_time_history.sleep_duration_in_sec,
               }
             ],
             pagination: {
