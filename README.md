@@ -54,7 +54,7 @@ Note: Open the `/coverage/index.html` file in your browser to view the detailed 
 - Notebook RAM: 16GB
 
 **Test result:**
-Average response time around 35ms
+Average API response time around 35ms
 
 ## Available endpoints
 ### 1. Get bed time histories for all following users
