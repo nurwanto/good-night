@@ -46,6 +46,7 @@ config/credentials/*.enc
 .DS_Store
 .env
 .env.*
+!.env.example
 
 # Ignore coverage reports
 coverage/
